@@ -1,5 +1,5 @@
 {
   "appId": "com.pushpendra.profitx",
   "appName": "ProfitX",
-  "webDir": "www"
+  "webDir": "."
 }
