@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#07152d"><title>ProfitX AI Signals — Prototype</title>
+<style>
+:root{--bg:#07152d;--panel:#102448;--panel2:#142e58;--cyan:#37d7ff;--green:#22d58a;--red:#ff5574;--muted:#9db2d2;--white:#f4f8ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0,#173b70 0,#07152d 48%);font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--white);min-height:100vh}
+.wrap{max-width:520px;margin:auto;padding:16px 14px 30px}.top{display:flex;align-items:center;justify-content:space-between;margin:8px 0 18px}.brand{font-size:23px;font-weight:900;letter-spacing:.4px}.brand span{color:var(--cyan)}.pill{font-size:11px;color:#ffd36a;border:1px solid #80652d;background:#493b1c66;padding:5px 9px;border-radius:20px}
+.notice{background:#47391b;border:1px solid #92702d;color:#ffe2a0;border-radius:12px;padding:10px 12px;font-size:12px;line-height:1.45;margin-bottom:14px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}.tab,button,select{font:inherit}.tab{background:#102448;color:var(--muted);border:1px solid #29456e;border-radius:12px;padding:12px;font-weight:700}.tab.active{background:#164c69;color:white;border-color:var(--cyan)}
+.card{background:linear-gradient(145deg,#122b52,#0d1e3d);border:1px solid #28466f;border-radius:18px;padding:15px;margin:12px 0;box-shadow:0 12px 28px #0003}
+.label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}.row{display:flex;gap:10px}.field{flex:1;min-width:0}select{width:100%;margin-top:7px;background:#091a35;color:white;border:1px solid #34527b;border-radius:10px;padding:11px}
+.signal{display:flex;align-items:center;justify-content:space-between;gap:12px}.signalIcon{font-size:34px;font-weight:900}.up{color:var(--green)}.down{color:var(--red)}.muted{color:var(--muted)}.big{font-size:28px;font-weight:900;margin:4px 0}.btn{width:100%;border:0;border-radius:12px;padding:14px;font-weight:800;background:linear-gradient(90deg,#12a8c9,#2266db);color:white;margin-top:13px}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.metric{background:#081a35;border:1px solid #213e68;border-radius:11px;padding:10px 7px;text-align:center}.metric b{display:block;font-size:16px}.metric small{font-size:10px;color:var(--muted)}
+.chart{height:160px;display:flex;align-items:end;gap:8px;padding:12px;background:#081a35;border-radius:12px;margin-top:12px}.candle{width:10%;border-radius:4px 4px 2px 2px;position:relative}.candle:before{content:"";position:absolute;left:45%;width:2px;height:130%;top:-15%;background:currentColor}.green{background:var(--green);color:var(--green)}.red{background:var(--red);color:var(--red)}
+.history{font-size:13px;display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #29405f}.foot{text-align:center;color:#8399b9;font-size:11px;margin-top:18px}
+</style>
+</head>
+<body><main class="wrap">
+<header class="top"><div class="brand">PROFIT<span>X</span></div><div class="pill">PROTOTYPE • DEMO MODE</div></header>
+<div class="notice"><b>सिर्फ डेमो:</b> यह ऐप अभी XM MT5 या Quotex से लाइव डेटा नहीं लेता। नीचे के सिग्नल नमूना हैं—इनके आधार पर असली ट्रेड न करें। कोई निश्चित accuracy या profit की गारंटी नहीं।</div>
+<div class="tabs"><button class="tab active" id="xmTab" onclick="switchMarket('xm')">XM MT5 • GOLD</button><button class="tab" id="qxTab" onclick="switchMarket('qx')">QUOTEX • OTC</button></div>
+<section class="card">
+<div class="row"><div class="field"><div class="label">Trading pair</div><select id="pair"><option>XAUUSD</option><option>EURUSD</option><option>GBPUSD</option></select></div><div class="field"><div class="label">Timeframe</div><select id="tf"><option>M1</option><option>M5</option><option>M15</option></select></div></div>
+<div class="row" style="margin-top:12px"><div class="field"><div class="label">Signal mode</div><select id="mode"><option>EMA + RSI + ADX (demo)</option><option>EMA crossover (demo)</option><option>RSI (demo)</option></select></div><div class="field"><div class="label">Expiry / duration</div><select id="expiry"><option>1 minute</option><option>5 minutes</option><option>30 seconds</option></select></div></div>
+<button class="btn" onclick="makeDemo()">GENERATE SAMPLE SIGNAL</button>
+</section>
+<section class="card">
+<div class="signal"><div><div class="label">Latest sample signal</div><div class="big" id="direction">WAITING</div><div class="muted" id="pairLabel">XAUUSD • M1 • Demo only</div></div><div class="signalIcon muted" id="arrow">◎</div></div>
+<div class="metrics"><div class="metric"><b id="ema">—</b><small>EMA STATUS</small></div><div class="metric"><b id="rsi">—</b><small>RSI (sample)</small></div><div class="metric"><b id="adx">—</b><small>ADX (sample)</small></div></div>
+<div class="label" style="margin-top:16px">Illustrative chart (not live)</div><div class="chart" id="chart"><div class="candle green" style="height:38%"></div><div class="candle red" style="height:27%"></div><div class="candle green" style="height:50%"></div><div class="candle green" style="height:64%"></div><div class="candle red" style="height:42%"></div><div class="candle green" style="height:76%"></div><div class="candle green" style="height:58%"></div></div>
+</section>
+<section class="card"><div class="label">Signal history</div><div id="history" class="muted" style="padding:14px 0;font-size:13px">अभी कोई sample signal नहीं।</div></section>
+<div class="foot">ProfitX prototype • No broker connection • No auto-trading</div>
+</main>
+<script>
+let market='xm', count=0;
+function switchMarket(m){market=m;document.getElementById('xmTab').classList.toggle('active',m==='xm');document.getElementById('qxTab').classList.toggle('active',m==='qx');document.getElementById('pair').innerHTML=m==='xm'?'<option>XAUUSD</option><option>EURUSD</option><option>GBPUSD</option>':'<option>EURUSD OTC</option><option>GBPUSD OTC</option><option>USDJPY OTC</option>';document.getElementById('tf').innerHTML=m==='xm'?'<option>M1</option><option>M5</option><option>M15</option>':'<option>30 seconds</option><option>1 minute</option><option>5 minutes</option>';document.getElementById('pairLabel').textContent=document.getElementById('pair').value+' • Demo only';}
+function makeDemo(){count++;let up=Math.random()>.5;let d=document.getElementById('direction'),a=document.getElementById('arrow');d.textContent=up?'SAMPLE BUY / CALL':'SAMPLE SELL / PUT';d.className='big '+(up?'up':'down');a.textContent=up?'↑':'↓';a.className='signalIcon '+(up?'up':'down');let pair=document.getElementById('pair').value,tf=document.getElementById('tf').value;document.getElementById('pairLabel').textContent=pair+' • '+tf+' • DEMO ONLY';document.getElementById('ema').textContent=up?'Bullish':'Bearish';document.getElementById('rsi').textContent=(35+Math.floor(Math.random()*31)).toString();document.getElementById('adx').textContent=(15+Math.floor(Math.random()*25)).toString();let h=document.getElementById('history');if(count===1)h.innerHTML='';let item=document.createElement('div');item.className='history';item.innerHTML='<span>'+pair+' • '+tf+'</span><b class="'+(up?'up':'down')+'">'+(up?'BUY / CALL':'SELL / PUT')+'</b>';h.prepend(item);}
+</script></body></html>
